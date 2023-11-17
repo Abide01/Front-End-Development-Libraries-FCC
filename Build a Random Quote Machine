@@ -1,0 +1,60 @@
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const QUOTE_API = 'https://api.quotable.io/random';
+
+function App() {
+  const [quote, setQuote] = useState('');
+  const [author, setAuthor] = useState('');
+
+  const fetchQuote = async () => {
+    try {
+      const response = await fetch(QUOTE_API);
+      const data = await response.json();
+      setQuote(data.content);
+      setAuthor(data.author);
+    } catch (error) {
+      console.error('Error fetching quote:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuote();
+  }, []); // Fetch quote on component mount
+
+  const handleNewQuote = () => {
+    fetchQuote();
+  };
+
+  return (
+    <div id="quote-box" className="container text-center">
+      <div id="text" className="my-4">
+        "{quote}"
+      </div>
+      <div id="author" className="mb-4">
+        - {author}
+      </div>
+      <button
+        id="new-quote"
+        className="btn btn-primary mr-2"
+        onClick={handleNewQuote}
+      >
+        New Quote
+      </button>
+      <a
+        id="tweet-quote"
+        className="btn btn-secondary"
+        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          `"${quote}" - ${author}`
+        )}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Tweet Quote
+      </a>
+    </div>
+  );
+}
+
+export default App;
